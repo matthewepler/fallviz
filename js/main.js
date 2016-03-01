@@ -3,10 +3,9 @@ var camera, renderer, scene, cameraControl;
 function init() {
 	scene = new THREE.Scene(); 
 
-    renderer = new THREE.WebGLRenderer(); 
-    renderer.setClearColor(0x000000, 1.0);
+    renderer = new THREE.WebGLRenderer({alpha:true}); 
+    //renderer.setClearColor(0x000000, 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
 
     camera = new THREE.PerspectiveCamera( 
         75, window.innerWidth / window.innerHeight, 0.1, 8000);
@@ -18,30 +17,25 @@ function init() {
 
     var axis = new Axis(scene);
 
-    var group = new THREE.Object3D(); // holds the resulting mesh. coming back to this. 
+    //parse data
+    var data = new Fall.DataSet();
+
+    // holds the resulting mesh. coming back to this. 
+    var group = new THREE.Object3D(); 
     group.position.y = 0;
     scene.add(group);
 
-    //parse data
-    var data = new Fall.DataSet();// new Surf.Data();
-
-    // create buffer geom and add to group as mesh
+    // create buffer geom and add to group obj as mesh
     createGeometry(data, group);
 
+    // kick it off!
     document.body.appendChild(renderer.domElement); 
-    render(); 
+    render(data); 
 }
 window.onload = init;
 
 
-function render() {
-	renderer.render(scene, camera);
-	requestAnimationFrame(render); 
-    cameraControl.update();
-}
-
-
-var bufferGeom, lineMaterial, mesh, positions, colors, currIndex = 0;
+var bufferGeom, lineMaterial, mesh, positions, colors;
 
 function createGeometry(parsedData, thegroup) {
     bufferGeom = new THREE.BufferGeometry();
@@ -55,3 +49,17 @@ function createGeometry(parsedData, thegroup) {
     mesh = new THREE.Line(bufferGeom, lineMaterial);
     thegroup.add(mesh);
 }   
+
+
+var currIndex = 0
+
+function render(renderData) {
+    requestAnimationFrame(render); 
+        if(bufferGeom) {
+            
+        }
+	renderer.render(scene, camera);
+    cameraControl.update();
+}
+
+

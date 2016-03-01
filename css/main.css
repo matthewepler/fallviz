@@ -1,0 +1,6 @@
+html, body{
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  background:radial-gradient(1045px 1045px, #fff 10px,#ababab 800px);
+}
