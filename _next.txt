@@ -1,1 +1,3 @@
-_next.txt
+> viz tag rientation in middle of axis
+> move into a box on the upper-right
+> make it hideable (minimize)

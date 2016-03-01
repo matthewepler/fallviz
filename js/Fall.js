@@ -1,5 +1,31 @@
 var Fall = Fall || {};
 
+Fall.GUI = function(){
+	$('.cancel').click(function() {
+		$('.data-container').css('display', 'none');
+		$('#data-input').get(0).value = '';
+	});
+  	$('.submit').click(function(){
+	    $('.data-container').css('display', 'none');
+	    if($('#data-input').get(0).value !== ''){
+	      // implement onNewData here
+	      console.log('new data copied: ');
+	      console.log($('#data-input').get(0).value);
+	    } else {
+	    	alert('no data imported!');
+	    }
+  });
+
+  this.data = function() {
+    $('.data-container').css('display', 'block');
+  };
+
+  this.z = 2000;
+
+  var gui = new dat.GUI();
+  gui.add(this, 'data');
+};
+
 Fall.DataSet = function() {
 	this.data = '+1,1,1,+2,2,2,+3,3,3';
 	this.coordinates = [];

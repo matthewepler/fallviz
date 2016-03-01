@@ -1,11 +1,13 @@
-var camera, renderer, scene, cameraControl;
+var camera, renderer, scene, cameraControl, gui;
 
 function init() {
+
 	scene = new THREE.Scene(); 
+    var container = document.getElementById('canvas-wrap');
 
     renderer = new THREE.WebGLRenderer({alpha:true}); 
-    //renderer.setClearColor(0x000000, 1.0);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild( renderer.domElement );
 
     camera = new THREE.PerspectiveCamera( 
         75, window.innerWidth / window.innerHeight, 0.1, 8000);
@@ -13,9 +15,12 @@ function init() {
     // camera.position.y = 16;
     camera.position.z = 2000;
     camera.lookAt(scene.position);
-    cameraControl = new THREE.OrbitControls(camera);
+    cameraControl = new THREE.OrbitControls(camera, container);
 
     var axis = new Axis(scene);
+
+    // GUI
+    gui = new Fall.GUI();
 
     //parse data
     var data = new Fall.DataSet();
@@ -29,7 +34,6 @@ function init() {
     createGeometry(data, group);
 
     // kick it off!
-    document.body.appendChild(renderer.domElement); 
     render(data); 
 }
 window.onload = init;
