@@ -5,6 +5,10 @@ html, body{
   background:radial-gradient(1045px 1045px, #fff 10px,#ababab 800px);
 }
 
+.gui-container {
+	position:absolute;
+}
+
 .data-container{
   display:none;
   position:absolute;
@@ -49,9 +53,4 @@ html, body{
 .submit:hover{
   background:black;
   color:white;
-}
-
-canvas{
-  position:relative;
-  z-index:0;
 }

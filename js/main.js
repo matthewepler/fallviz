@@ -1,12 +1,13 @@
-var camera, renderer, scene, cameraControl, gui;
+var camera, gui;
 
-function init() {
+$(document).ready(function(){
 
-	scene = new THREE.Scene(); 
-    var container = document.getElementById('canvas-wrap');
+	var scene = new THREE.Scene(); 
 
-    renderer = new THREE.WebGLRenderer({alpha:true}); 
+    var renderer = new THREE.WebGLRenderer({alpha:true}); 
     renderer.setSize(window.innerWidth, window.innerHeight);
+
+    var container = document.getElementById('canvas-wrap');
     container.appendChild( renderer.domElement );
 
     camera = new THREE.PerspectiveCamera( 
@@ -15,15 +16,14 @@ function init() {
     // camera.position.y = 16;
     camera.position.z = 2000;
     camera.lookAt(scene.position);
-    cameraControl = new THREE.OrbitControls(camera, container);
+    var cameraControl = new THREE.OrbitControls(camera, container);
 
     var axis = new Axis(scene);
 
     // GUI
     gui = new Fall.GUI();
 
-    //parse data
-    var data = new Fall.DataSet();
+    var data = new Fall.Data();
 
     // holds the resulting mesh. coming back to this. 
     var group = new THREE.Object3D(); 
@@ -35,35 +35,37 @@ function init() {
 
     // kick it off!
     render(data); 
-}
-window.onload = init;
+
+    var bufferGeom, lineMaterial, mesh, positions, colors;
+
+    function createGeometry() {
+        bufferGeom = new THREE.BufferGeometry();
+        lineMaterial = new THREE.LineBasicMaterial({vertexColors: true});
+
+        bufferGeom.addAttribute( 'position', new Float32Array( data.coordinates.length * 3 ), 3);
+        bufferGeom.addAttribute( 'color', new Float32Array( data.coordinates.length * 3 ), 3);
+
+        positions = bufferGeom.getAttribute('position').array;
+        colors = bufferGeom.getAttribute('color').array;
+        mesh = new THREE.Line(bufferGeom, lineMaterial);
+        group.add(mesh);
+    }   
 
 
-var bufferGeom, lineMaterial, mesh, positions, colors;
+    var currIndex = 0
 
-function createGeometry(parsedData, thegroup) {
-    bufferGeom = new THREE.BufferGeometry();
-    lineMaterial = new THREE.LineBasicMaterial({vertexColors: true});
+    function render(renderData) {
+        requestAnimationFrame(render); 
+            if(bufferGeom) {
+                
+            }
+    	renderer.render(scene, camera);
+        cameraControl.update();
+    }
 
-    bufferGeom.addAttribute( 'position', new Float32Array( parsedData.coordinates.length * 3 ), 3);
-    bufferGeom.addAttribute( 'color', new Float32Array( parsedData.coordinates.length * 3 ), 3);
+    createGeometry();
+    render();
+});
 
-    positions = bufferGeom.getAttribute('position').array;
-    colors = bufferGeom.getAttribute('color').array;
-    mesh = new THREE.Line(bufferGeom, lineMaterial);
-    thegroup.add(mesh);
-}   
-
-
-var currIndex = 0
-
-function render(renderData) {
-    requestAnimationFrame(render); 
-        if(bufferGeom) {
-            
-        }
-	renderer.render(scene, camera);
-    cameraControl.update();
-}
 
 
