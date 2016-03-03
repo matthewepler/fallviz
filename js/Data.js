@@ -1,21 +1,53 @@
 var Fall = Fall || {};
 
 Fall.Data = function() {
-	this.data = '';
+	this.readings = [];
 	this.coordinates = [];
-	this.parseData(this.data);
 };
 
 Fall.Data.prototype.parseData = function(data) {
-	console.log("data passed to 'parseData' = ", data);
-	var rows = data.split('+');
-	var prevTime = 0;
- 	var prevLoc = new THREE.Vector3(0, 0, 0);
- 	var currLoc = new THREE.Vector3(0, 0, 0);
+	var readings = this.readings = [];
 
- 	for(var i = 1; i < rows.length; i++){
-	    var c = new Fall.Coordinate();
-	    var vals = rows[i].split(',');
+	if(data !== '') {
+		var rgx = /(-*\d.{3,4}),(-*\d.{3,4}),(-*\d.{3,4})(?=\])/gm;
+		var objNames = ['ori', 'acc', 'gyr'];
+		function Sensor(name, x, y, z) {
+						this.name = name;
+						this.x = x;
+						this.y = y;
+						this.z = z;
+					};
+		
+
+		var rows = data.split('\n');
+		rows.forEach(function(item, index) {
+			if(item.includes('orin')) {
+				var match = item.match(rgx);
+				//console.log('result of match = ', match);
+				var thisLine = [];
+				match.forEach(function(mItem, mIndex) {
+					var vals = mItem.split(',');
+					var thisSensor = new Sensor(objNames[mIndex], vals[0], vals[1], vals[2]);
+					thisLine.push(thisSensor);
+				});
+				//console.log('result of parse = ', thisLine);
+				readings.push(thisLine);
+			}
+		});
+		//console.log(readings.length);
+		customAlert(readings.length + ' lines imported');
+	} else {
+		// alert("Copy/paste data into the data field in the upper-left.");
+	}
+	
+
+	// var prevTime = 0;
+ // 	var prevLoc = new THREE.Vector3(0, 0, 0);
+ // 	var currLoc = new THREE.Vector3(0, 0, 0);
+
+ // 	for(var i = 1; i < rows.length; i++){
+	//     var c = new Fall.Coordinate();
+	//     var vals = rows[i].split(',');
 	    // var timestamp = parseInt(vals[0], 10);
 	    // var deltaTime = timestamp - prevTime;
 	    // var x = parseFloat(vals[1]);
@@ -33,7 +65,7 @@ Fall.Data.prototype.parseData = function(data) {
 
 	    // prevLoc = c.loc;
 	    // prevTime = timestamp;
-  	}
+  	//}
 
  //  	var locations = _.pluck(this.coordinates, 'loc');
 

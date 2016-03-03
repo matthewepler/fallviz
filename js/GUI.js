@@ -1,18 +1,18 @@
 var Fall = Fall || {};
 
 
-Fall.GUI = function(){
+Fall.GUI = function(onNewData){
+	// runs anytime 'data' field in control box is clicked
 	$('.cancel').click(function() {
 		$('.data-container').css('display', 'none');
 		$('#data-input').get(0).value = '';
 	});
-  	$('.submit').click(function(){
+	
+	// runs anytime 'submit' is clicked
+  	$('.submit').click(function(){ 
 	    $('.data-container').css('display', 'none');
-	    this.data = $('#data-input').get(0).value;
-	    if(this.data !== ''){
-	      this.parseData(this.data);
-	    } else {
-	    	alert('no data imported!');
+	    if($('#data-input').get(0).value !== ''){
+	      onNewData($('#data-input').get(0).value);
 	    }
   });
 
@@ -24,16 +24,9 @@ Fall.GUI = function(){
 
   var gui = new dat.GUI({ autoPlace: false });
   gui.add(this, 'data');
+  
   var customContainer = document.getElementById('gui-container');
   customContainer.appendChild(gui.domElement);
 };
 
-
-Fall.Coordinate = function() {
-	this.loc   	  = new THREE.Vector3();
-	this.locDiff  = new THREE.Vector3();
-	this.accel	  = new THREE.Vector3();
-	this.vel   	  = new THREE.Vector3();
-	this.force 	  = new THREE.Vector3();
-}
 

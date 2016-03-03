@@ -21,7 +21,17 @@ $(document).ready(function(){
     var axis = new Axis(scene);
 
     // GUI
-    gui = new Fall.GUI();
+    gui = new Fall.GUI(function(newData){ 
+        // will get run anytime 'submit' is clicked
+        // we pass it here because we need the closure 
+
+        // var objsToRemove = _.rest(group.children, 1);
+        // _.each(objsToRemove, function( object ) {
+        //       group.remove(object);
+        // });
+        data.parseData(newData);
+        createGeometry();
+    });
 
     var data = new Fall.Data();
 
@@ -67,5 +77,10 @@ $(document).ready(function(){
     render();
 });
 
-
-
+function customAlert(text) {
+    $("#messages h1").text(text);
+    $("#messages").css('opacity', 1);
+    setTimeout(function() {
+        $('#messages').css('opacity', 0);
+    },3000);
+}
