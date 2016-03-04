@@ -1,5 +1,5 @@
-> get external data into scene
+> animate tag orientation in middle of axis
 
-> animate tag rientation in middle of axis
-> move into a box on the upper-right
-> make it hideable (minimize)
+	> implement Processing code
+
+
