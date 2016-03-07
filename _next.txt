@@ -1,5 +1,17 @@
-> animate tag orientation in middle of axis
+> animate tag
+	> use the tween code from the test you did in the main app, grabbing the 'ori' array data.
 
-	> implement Processing code
+> are you filling the ori, acc, and gyr arrays when parsing?
+// how do deal with the first frame if calcs are done in calcNextPos();
 
+> add a timeline
 
+> add the side views
+
+> build out meta data console 
+
+> build graphs with ori, acc, gyr data at bottom
+
+> load text files from file
+	> save last used data
+		> do I need node to do this?

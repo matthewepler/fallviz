@@ -1,12 +1,20 @@
 var Fall = Fall || {};
 
 Fall.Data = function() {
-	this.readings = [];
+	this.readings = defaultData.readings;
+	this.ori = defaultData.ori;
+	this.acc = defaultData.acc;
+	this.gyr = defaultData.gyr;
 	this.coordinates = [];
+
+	console.log(this.gyr);
 };
 
 Fall.Data.prototype.parseData = function(data) {
 	var readings = this.readings = [];
+	var ori = this.ori = [];
+	var acc = this.acc = [];
+	var gyr = this.gyr = [];
 
 	if(data !== '') {
 		var rgx = /(-*\d.{3,4}),(-*\d.{3,4}),(-*\d.{3,4})(?=\])/gm;
@@ -17,7 +25,6 @@ Fall.Data.prototype.parseData = function(data) {
 						this.y = y;
 						this.z = z;
 					};
-		
 
 		var rows = data.split('\n');
 		rows.forEach(function(item, index) {
@@ -29,13 +36,20 @@ Fall.Data.prototype.parseData = function(data) {
 					var vals = mItem.split(',');
 					var thisSensor = new Sensor(objNames[mIndex], vals[0], vals[1], vals[2]);
 					thisLine.push(thisSensor);
+					if (thisSensor.name === 'ori') {
+						ori.push(thisSensor);
+					} else if (thisSensor.name === 'acc') {
+						acc.push(thisSensor);
+					} else if (thisSensor.name === 'gyr') {
+						gyr.push(thisSensor);
+					}
 				});
 				//console.log('result of parse = ', thisLine);
 				readings.push(thisLine);
 			}
 		});
-		//console.log(readings.length);
-		customAlert(readings.length + ' lines imported');
+		customAlert(readings.length + ' lines imported'); // **!!**  add to meta data column!!!!!
+		// console.log(acc);
 	} else {
 		// alert("Copy/paste data into the data field in the upper-left.");
 	}

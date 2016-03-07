@@ -1,4 +1,9 @@
 var camera, rotationCamera, gui;
+var data;
+var box;
+var animating = false;
+var currIndex = 0;
+var timeChunk = 40; //ms, arbitrary dude to lack of timestamp in dataset
 
 $(document).ready(function(){
 
@@ -60,6 +65,7 @@ $(document).ready(function(){
 
 
     var axis = new Axis(scene);
+    data = new Fall.Data();
 
     // GUI
     gui = new Fall.GUI(function(newData){ 
@@ -74,7 +80,6 @@ $(document).ready(function(){
         createGeometry();
     });
 
-    var data = new Fall.Data();
 
     
 
@@ -84,20 +89,15 @@ $(document).ready(function(){
     group.position.y = 0;
     scene.add(group);
 
-    // create buffer geom and add to group obj as mesh
-    createGeometry(data, group);
-
-    // kick it off!
-    render(data); 
-
     var bufferGeom, lineMaterial, mesh, positions, colors;
 
     function createGeometry() {
         bufferGeom = new THREE.BufferGeometry();
         lineMaterial = new THREE.LineBasicMaterial({vertexColors: true});
+        var attribute = new THREE.BufferAttribute(new Float32Array( data.coordinates.length * 3 ), 3)
 
-        bufferGeom.addAttribute( 'position', new Float32Array( data.coordinates.length * 3 ), 3);
-        bufferGeom.addAttribute( 'color', new Float32Array( data.coordinates.length * 3 ), 3);
+        bufferGeom.addAttribute( 'position', attribute);
+        bufferGeom.addAttribute( 'color', attribute);
 
         positions = bufferGeom.getAttribute('position').array;
         colors = bufferGeom.getAttribute('color').array;
@@ -105,22 +105,71 @@ $(document).ready(function(){
         group.add(mesh);
     }   
 
-
-    var currIndex = 0
+/************************************************************ RENDER **/
+    box = rotationScene.children[1];
 
     function render(renderData) {
         requestAnimationFrame(render); 
             if(bufferGeom) {
-                
+                // see surffin code
             }
         renderer.render( scene, camera );
         rotationRenderer.render( rotationScene, rotationCamera );
         cameraControl.update();
+
+        // data arrays have default objects hardcoded. 
+        // these are replaced when new data is parsed
+        // so reading from the same place will always returnt the latest data.
+
+        if(!animating && currIndex < data.ori.length-1) { // each obj in readings array has 3 Sensor objects
+            // animate rotation/orientation data.
+            animate(box.rotation, currIndex, 'ori');
+        }
+        TWEEN.update();
     }
 
     createGeometry();
-    render();
+    render(data); 
 });
+
+/************************************************************ ANIMATE **/
+function animate(obj, index, name) {
+    var dataObj;
+    if (name === 'ori') {
+      dataObj = calcNextPos(data.ori[index]);  
+  } else if (name === 'acc') {
+      dataObj = calcNextPos(data.acc[index]);
+  } else if (name === 'gyr') {
+      dataObj = calcNextPos(data.gyr[index]);
+  } 
+
+    var tween = new TWEEN.Tween(obj)
+        .to({x: dataObj.x, y: dataObj.y, z: dataObj.z}, timeChunk) // timeChunk is in ms, arbitrary for now b/c we don't have timestamp in ms
+        .onStart( function() {
+            //console.log(this);
+            animating = true;
+        })
+        .onUpdate( function() {
+            //console.log(this.x);
+        })
+        .onComplete( function() {
+            animating = false;
+            customAlert("animation complete");
+            currIndex++;  
+        })
+        .start();
+}
+
+function calcNextPos(_obj) {
+    var tempObj = {};
+
+    // deg to rad
+    tempObj.x = (_obj.x * Math.PI / 180); //console.log(_obj.x);
+    tempObj.y = (_obj.y * Math.PI / 180);
+    tempObj.z = (_obj.z * Math.PI / 180);
+    console.log("calcNextPos() returns: " + tempObj.x + ", " + tempObj.y + ", " + tempObj.z);
+    return tempObj;
+}
 
 function customAlert(text) {
     $("#messages h1").text(text);
@@ -143,4 +192,5 @@ function handleResize() {
 
 window.addEventListener('resize', handleResize, false);
 $("#data-input").on('click', function(){this.select()});
+
 
